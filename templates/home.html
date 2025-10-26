@@ -4,18 +4,18 @@
 {% block content %}
 <!-- Check user is Authenticated and display custom message. -->
 {% if user.is_authenticated %}
-<p>Hi {{user.first_name|title}} {{user.last_name|title}}</p>
+<p>Hi
+    {% if user.first_name %}
+    {{ user.first_name|title }} {{user.last_name|title}}
+    {% else %}
+    {{user.username|title }}
+    {% endif %}
+</p>
 
 <!-- Check if it is the user's birthday today. -->
 {% if user.is_birthday %}
 <p>🎉 Happy Birthday! Wishing you joy, laughter, and cake-filled moments today as you turn {{user.age}} years old.🎂</p>
 {% endif %}
-
-<!-- Display logout button. -->
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Log out</button>
-</form>
 {% else %}
 
 <p>You are not logged in.</p>
