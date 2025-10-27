@@ -8,6 +8,7 @@ from .models import Article
 
 User = get_user_model()
 
+
 class ArticleModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -141,7 +142,6 @@ class ArticleURLTests(TestCase):
         Article.objects.create(title="Another", body="Body", author=self.user)
         updated_resp = self.client.get(reverse("article_list"))
         self.assertEqual(updated_resp.context["articles"].count(), 2)
-
 
 
 class ArticleViewsTests(TestCase):
