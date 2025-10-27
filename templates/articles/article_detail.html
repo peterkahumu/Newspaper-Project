@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %} {{article.title}} {% endblock title %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="mb-0">{{ article.title|title }}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        <strong>Author:</strong> {{ article.author.get_full_name|default:article.author.username }}<br>
+                        <strong>Created:</strong> {{ article.created_at|date:"M d, Y" }}<br>
+                        <strong>Updated:</strong> {{ article.updated_at|date:"M d, Y" }}
+                    </p>
+                    <hr>
+                    <h5 class="text-secondary">Summary</h5>
+                    <p>{{ article.snippet }}</p>
+                    <hr>
+                    <h5 class="text-secondary">Full Content</h5>
+                    <p>{{ article.body|linebreaks }}</p>
+                </div>
+                <div class="card-footer text-end bg-light">
+                    <a href="{% url 'article_edit' article.pk %}" class="btn btn-outline-success btn-sm">Edit</a>
+                    <a href="{% url 'article_delete' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                    <a href="{% url 'article_list' %}" class="btn btn-secondary btn-sm">Back to Articles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
