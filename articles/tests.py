@@ -161,11 +161,20 @@ class ArticleViewsTests(TestCase):
             title="View Test Article", body="View Test Body", author=self.user
         )
 
-    def test_create_view_requires_login(self):
+    def test_views_require_login(self):
         """Unauthenticated users get redirected."""
-        response = self.client.get(reverse("article_create"))
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith("/accounts/login/"))
+        create = self.client.get(reverse("article_create"))
+        list_articles = self.client.get(reverse("article_list"))
+        edit = self.client.get(reverse("article_detail", kwargs={"pk": self.article.pk}))
+        
+        self.assertEqual(create.status_code, 302)
+        self.assertEqual(list_articles.status_code, 302)
+        self.assertEqual(edit.status_code, 302)
+
+        self.assertTrue(create.url.startswith("/accounts/login/"))
+        self.assertTrue(list_articles.url.startswith("/accounts/login/"))
+        self.assertTrue(edit.url.startswith("/accounts/login/"))
+
 
     def test_logged_in_user_can_create_article(self):
         """Logged-in user can create and becomes author."""

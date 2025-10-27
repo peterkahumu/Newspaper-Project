@@ -7,13 +7,13 @@ from .models import Article
 
 
 # Create your views here.
-class ArticleListView(ListView):
+class ArticleListView(LoginRequiredMixin, ListView):
     model = Article
     template_name = "articles/article_list.html"
     context_object_name = "articles"
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(LoginRequiredMixin, DetailView):
     model = Article
     template_name = "articles/article_detail.html"
 
