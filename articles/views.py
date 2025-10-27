@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from .models import Article
 
@@ -18,29 +18,22 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
     template_name = "articles/article_detail.html"
 
 
-class ArticleEditView(LoginRequiredMixin, UpdateView):
+class ArticleEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     template_name = "articles/article_edit.html"
     fields = ["title", "body"]
     context_object_name = "article"
 
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.author != self.request.user:
-            raise PermissionDenied("You are not allowed to edit this article.")
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        return self.get_object().author == self.request.user
 
-
-class ArticleDeleteView(LoginRequiredMixin, DeleteView):
+class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Article
     template_name = "articles/article_delete.html"
     success_url = reverse_lazy("article_list")
 
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.author != self.request.user:
-            raise PermissionDenied("You are not allowed to delete this article.")
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        return self.get_object().author == self.request.user
 
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
