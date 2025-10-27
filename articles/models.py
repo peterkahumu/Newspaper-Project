@@ -27,7 +27,7 @@ class Article(models.Model):
 
     @property
     def snippet(self):
-        """Get the first five word and display them with trailing eplipses"""
+        """Get the first five words and display them with trailing eplipses"""
         words = self.body.split()
         snippet = " ".join(words[:5])
         return snippet + "..."
