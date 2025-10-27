@@ -15,15 +15,14 @@
                         <strong>Updated:</strong> {{ article.updated_at|date:"M d, Y" }}
                     </p>
                     <hr>
-                    <h5 class="text-secondary">Summary</h5>
-                    <p>{{ article.snippet }}</p>
-                    <hr>
-                    <h5 class="text-secondary">Full Content</h5>
+                    <h5 class="text-secondary fw-bold">Full Content</h5>
                     <p>{{ article.body|linebreaks }}</p>
                 </div>
                 <div class="card-footer text-end bg-light">
+                    {% if article.author == request.user %}
                     <a href="{% url 'article_edit' article.pk %}" class="btn btn-outline-success btn-sm">Edit</a>
                     <a href="{% url 'article_delete' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                    {% endif %}
                     <a href="{% url 'article_list' %}" class="btn btn-secondary btn-sm">Back to Articles</a>
                 </div>
             </div>

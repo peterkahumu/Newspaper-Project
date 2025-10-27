@@ -10,7 +10,7 @@
             </div>
             <div class="card-body text-center">
                 <p>Are you sure you want to delete <strong>{{ object.title }}</strong>?</p>
-                <form action="{% url 'article_delete' article.pk %}" method="post">
+                <form method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     <a href="{% url 'article_detail' article.pk %}" class="btn btn-secondary">Cancel</a>

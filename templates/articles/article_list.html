@@ -30,8 +30,7 @@
                     </small>
                     <hr>
                     <div class="d-flex justify-content-between">
-                        <a href="{% url 'article_edit' article.pk %}" class="btn btn-outline-success btn-sm">Edit</a>
-                        <a href="{% url 'article_delete' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        <a href="{{article.get_absolute_url}}" class="btn btn-outline-primary">Read More</a>
                     </div>
                 </div>
             </div>
