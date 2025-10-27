@@ -8,10 +8,6 @@ from .models import Article
 
 User = get_user_model()
 
-
-# -------------------------------
-# 🧩 MODEL TESTS
-# -------------------------------
 class ArticleModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -67,7 +63,6 @@ class ArticleModelTests(TestCase):
         original_updated = self.article.updated_at
         # simulate change without sleep
         self.article.title = "Updated Title"
-        self.article.updated_at = timezone.now() + timezone.timedelta(seconds=5)
         self.article.save()
         self.article.refresh_from_db()
         self.assertGreater(self.article.updated_at, original_updated)
@@ -78,9 +73,6 @@ class ArticleModelTests(TestCase):
         self.assertEqual(Article.objects.count(), 0)
 
 
-# -------------------------------
-# 🌐 URL TESTS
-# -------------------------------
 class ArticleURLTests(TestCase):
     """Ensure that URL routing and templates work correctly."""
 
@@ -133,7 +125,7 @@ class ArticleURLTests(TestCase):
 
         self.assertContains(list_resp, "Articles")
         self.assertContains(detail_resp, "Test Article")
-        self.assertContains(delete_resp, "Confirm Deletion")
+        self.assertContains(delete_resp, "Delete Test Article")
         self.assertContains(edit_resp, "Edit Test Article")
 
     def test_template_context(self):
@@ -151,9 +143,7 @@ class ArticleURLTests(TestCase):
         self.assertEqual(updated_resp.context["articles"].count(), 2)
 
 
-# -------------------------------
-# ⚙️ VIEW TESTS
-# -------------------------------
+
 class ArticleViewsTests(TestCase):
     """Test behaviors and permissions in views."""
 
