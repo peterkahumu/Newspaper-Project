@@ -165,8 +165,10 @@ class ArticleViewsTests(TestCase):
         """Unauthenticated users get redirected."""
         create = self.client.get(reverse("article_create"))
         list_articles = self.client.get(reverse("article_list"))
-        edit = self.client.get(reverse("article_detail", kwargs={"pk": self.article.pk}))
-        
+        edit = self.client.get(
+            reverse("article_detail", kwargs={"pk": self.article.pk})
+        )
+
         self.assertEqual(create.status_code, 302)
         self.assertEqual(list_articles.status_code, 302)
         self.assertEqual(edit.status_code, 302)
@@ -174,7 +176,6 @@ class ArticleViewsTests(TestCase):
         self.assertTrue(create.url.startswith("/accounts/login/"))
         self.assertTrue(list_articles.url.startswith("/accounts/login/"))
         self.assertTrue(edit.url.startswith("/accounts/login/"))
-
 
     def test_logged_in_user_can_create_article(self):
         """Logged-in user can create and becomes author."""

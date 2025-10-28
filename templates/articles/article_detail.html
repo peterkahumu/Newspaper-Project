@@ -1,32 +1,66 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block title %} {{article.title}} {% endblock title %}
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2 class="mb-0">{{ article.title|title }}</h2>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">
-                        <strong>Author:</strong> {{ article.author.get_full_name|default:article.author.username }}<br>
-                        <strong>Created:</strong> {{ article.created_at|date:"M d, Y" }}<br>
-                        <strong>Updated:</strong> {{ article.updated_at|date:"M d, Y" }}
-                    </p>
-                    <hr>
-                    <h5 class="text-secondary fw-bold">Full Content</h5>
-                    <p>{{ article.body|linebreaks }}</p>
-                </div>
-                <div class="card-footer text-end bg-light">
-                    {% if article.author == request.user %}
-                    <a href="{% url 'article_edit' article.pk %}" class="btn btn-outline-success btn-sm">Edit</a>
-                    <a href="{% url 'article_delete' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
-                    {% endif %}
-                    <a href="{% url 'article_list' %}" class="btn btn-secondary btn-sm">Back to Articles</a>
-                </div>
+<div class="row justify-content-center mt-5">
+    <div class="col-xl-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h2 class="mb-0">{{ article.title|title }}</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <strong>Author:</strong> {{ article.author.get_full_name|default:article.author.username }}<br>
+                    <strong>Created:</strong> {{ article.created_at|date:"M d, Y" }}<br>
+                    <strong>Updated:</strong> {{ article.updated_at|date:"M d, Y" }}
+                </p>
+                <hr>
+                <h5 class="text-secondary fw-bold">Full Content</h5>
+                <p>{{ article.body|linebreaks }}</p>
+            </div>
+            <div class="card-footer bg-light">
+                {% if article.author == request.user %}
+                <a href="{% url 'article_edit' article.pk %}" class="btn btn-outline-success btn-sm">Edit</a>
+                <a href="{% url 'article_delete' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                {% endif %}
+                <a href="{% url 'article_list' %}" class="btn btn-secondary btn-sm">Back to Articles</a>
             </div>
         </div>
     </div>
+    <div class="col-xl-4 mt-2">
+        <form method="post">
+            {% csrf_token %}
+            {{form|crispy}}
+            <input class="btn btn-success btn-sm" type="submit" value="Comment">
+        </form>
+        <br>
+        <div class="card-title">
+            <h2>Comments</h2>
+            <span class="bi bi-chat-dots-fill"></span> {{article.comment_set.all.count}} <i
+                class="text-muted">comments</i>
+        </div>
+        {% for comment in article.comment_set.all %}
+        <p class="mb-0 mt-2">
+            <span class="fw-bold">{{comment.author|title}}</span>
+        </p>
+        {{comment}}
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const asteriskField = document.querySelector(".asteriskField");
+        const formLabel = document.querySelector(".form-label");
+
+        if (asteriskField) asteriskField.textContent = "";
+
+        if (formLabel) {
+            const h4 = document.createElement("h4");
+            h4.textContent = "Add a Comment";
+            h4.className = formLabel.className; // preserve styling
+            formLabel.replaceWith(h4);
+        }
+    });
+</script>
 {% endblock %}
