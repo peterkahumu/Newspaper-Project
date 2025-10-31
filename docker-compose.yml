@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "./wait-for-it.sh db:5432 -t 60 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/app
     env_file:
@@ -14,7 +14,7 @@ services:
   db:
     image: postgres:18
     volumes:
-      - postgres_data:/var/lib/postgres/data
+      - postgres_data:/var/lib/postgresql
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
