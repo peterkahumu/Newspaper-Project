@@ -1,0 +1,29 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+*.env
+
+# Git files
+.git
+
+# OS files
+.DS_Store
+
+# Docker-related
+Dockerfile
+docker-compose.yml
+
+# Docs and misc
+README.md
+LICENSE
+
+# Cache & build stuff
+*.log
+*.sqlite3
+build/
+dist/
+staticfiles/
