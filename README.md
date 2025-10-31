@@ -1,7 +1,3 @@
-Here’s your updated README with **working Markdown anchor links** that correctly match GitHub’s automatic heading IDs — everything else stays untouched:
-
----
-
 # Newspaper Project
 
 A Django based news website with user authentication, article management, and commenting features.
