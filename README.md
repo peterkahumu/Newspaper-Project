@@ -1,193 +1,306 @@
+Here’s your updated README with **working Markdown anchor links** that correctly match GitHub’s automatic heading IDs — everything else stays untouched:
+
+---
+
 # Newspaper Project
 
-A simple Django-based news website (local development project) with three main apps:
-- `accounts` — custom user model and registration/auth flows
-- `articles` — article CRUD (create, list, detail, edit, delete)
-- `pages` — static pages (home, about, etc.)
+A Django based news website with user authentication, article management, and commenting features.
 
-This repository contains the Django project `newspaper_project` and templates under `templates/` for rendering pages and authentication.
+## Table of Contents
 
+* [Features](#features)
+* [Tech Stack](#tech-stack)
+* [Quick Start](#quick-start)
+
+  * [Option 1 Local Setup Virtual Environment](#option-1-local-setup-virtual-environment)
+  * [Option 2 Docker Setup](#option-2-docker-setup)
+* [Project Structure](#project-structure)
+* [Key Models](#key-models)
+* [URL Routes](#url-routes)
+* [Testing](#testing)
+* [Development](#development)
+* [Deployment Considerations](#deployment-considerations)
+* [Troubleshooting](#troubleshooting)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
 
 ## Features
 
-- Custom user model (in `accounts`) with registration and authentication views and templates
-- Password reset, and password change features.
-- Article creation, editing, deletion and listing (in `articles`)
-- Basic static pages served from `pages`
-- Ready-to-use templates and navigation component
+* **User Management**: Custom user model with registration, login, password reset, and birthday detection
+* **Article CRUD**: Create, read, update, and delete articles with author only permissions
+* **Commenting System**: Users can comment on articles (with restrictions)
+* **Responsive UI**: Bootstrap 5 interface with modern design
 
-## Prerequisites
+## Tech Stack
 
-- Python 3.12.3+ (project was developed with Python 3.12.3+)
-- pip
-- (Optional) virtualenv or venv
+* **Backend**: Python 3.12+, Django 5.2.7
+* **Database**: PostgreSQL 18
+* **Frontend**: Bootstrap 5, Crispy Forms
+* **Containerization**: Docker & Docker Compose
 
-## Quickstart (development)
+## Quick Start
 
-1. Clone the repository (if you haven't already):
+### Option 1 Local Setup Virtual Environment
 
-   ```python
-   git clone https://github.com/peterkahumu/Newspaper-Project.git
-   cd newspaper_project
-   ```
+#### Prerequisites
 
-2. Create and activate a virtual environment (recommended):
+* Python 3.12.3+
+* PostgreSQL 13+
+* pip
 
-   ```python
-   python3 -m venv .venv
+#### Installation
 
-   # linux and macos
-   source .venv/bin/activate
+1. **Clone and setup environment**
 
-   #windows
-   source .venv/Scripts/activate
-   ```
+```bash
+git clone https://github.com/peterkahumu/Newspaper-Project.git
+cd newspaper_project
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-3. Install dependencies:
+2. **Configure database**
 
-   ```python
-   pip install -r requirements.txt
-   ```
+```bash
+# Create PostgreSQL database
+psql -U postgres
+CREATE DATABASE newspaper_db;
+CREATE USER newspaper_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE newspaper_db TO newspaper_user;
+\q
+```
 
-4. Database and migrations (uses `POSTGRES`):
+3. **Setup environment variables**
 
-   ```python
-   python manage.py migrate
-   ```
-
-5. Create a superuser to access the admin:
-
-   ```python
-   python manage.py createsuperuser
-   ```
-
-6. Run the development server:
-
-   ```python
-   python manage.py runserver
-   ```
-
-Open http://127.0.0.1:8000 in your browser.
-
-## Environment & configuration
-
-1. Please create a `.env` file in the root project folder.
-2. Run the following command in your terminal.
 ```bash
 cp .env_example .env
+# Edit .env with your settings
 ```
-3. Create a postgres database and enter the credentials in the appropriate tags.
-4. Provide a secret key next to the `SECRET_KEY` variable.
 
-> NB: Please make sure that `.env` is added to `.gitignore` to avoid uploading sensitive information to the cloud.
+Example `.env`:
 
-## Docker (optional)
+```env
+DEBUG=True
+SECRET_KEY=your-secret-key-here
 
-If you prefer running the project in containers instead of a local virtual environment, this repository includes a `Dockerfile`, `docker-compose.yml`, and a `.dockerignore` to help you build and run the project with Docker.
+DB_NAME=newspaper_db
+DB_USER=newspaper_user
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+```
 
-Note: The instructions below assume your `docker-compose.yml` defines a service named `web`. If your service uses a different name, replace `web` with your service name when running the commands.
-
-1. Build and start containers (foreground):
+4. **Run migrations and create superuser**
 
 ```bash
-docker compose up --build
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-Or run in detached mode:
+Visit: `http://127.0.0.1:8000`
+
+---
+
+### Option 2 Docker Setup
+
+#### Prerequisites
+
+* Docker Engine 20.10+
+* Docker Compose 2.0+
+
+#### Installation
+
+1. **Clone and configure**
+
+```bash
+git clone https://github.com/peterkahumu/Newspaper-Project.git
+cd newspaper_project
+cp .env_example .env
+# Edit .env - Set DB_HOST=db for Docker
+```
+
+2. **Build and run**
 
 ```bash
 docker compose up -d --build
+docker compose exec web python manage.py createsuperuser
 ```
 
-2. Create a superuser (in the container):
+Visit: `http://localhost:8000`
+
+#### Docker Commands
 
 ```bash
-docker compose run --rm web python manage.py createsuperuser
-```
+# View logs
+docker compose logs -f
 
-3. Collect static files (if needed):
-
-```bash
-docker compose run --rm web python manage.py collectstatic --noinput
-```
-
-4. Stop and remove containers:
-
-```bash
+# Stop containers
 docker compose down
+
+# Restart
+docker compose restart
+
+# Run migrations
+docker compose exec web python manage.py migrate
+
+# Access shell
+docker compose exec web python manage.py shell
 ```
 
-Environment variables: keep using a `.env` (or `.env.example`) for secret/config values. `docker-compose` will automatically load variables from a `.env` file in the compose directory. Make sure sensitive values (like `SECRET_KEY`) are not committed.
+## Project Structure
 
-Why choose Docker?
-- Isolation: dependencies and the runtime environment are containerized and consistent across machines.
-- Useful for CI and production parity.
+```
+newspaper_project/
+├── accounts/              # User authentication
+├── articles/              # Article & comment management
+├── pages/                 # Static pages
+├── templates/             # HTML templates
+├── newspaper_project/     # Project settings
+├── requirements.txt       # Python dependencies
+├── Dockerfile             # Docker configuration
+└── docker-compose.yml     # Docker Compose setup
+```
 
-Why choose a virtualenv?
-- Simpler for light local development and quick iteration without containers.
-- Slightly less overhead on machines without Docker installed.
+## Key Models
 
-Both approaches are supported — pick the one that fits your workflow.
-## Running tests
+### CustomUser
 
-Run the project's tests with Django's test runner:
+* UUID primary key
+* Additional fields: date_of_birth
+* Computed properties: age, is_birthday
 
-   ```python
-   python manage.py test <app-name>
-   ```
-   for a specific app, or
-   ```python 
-   python manage.py test
-   ```
-   to run the all the test in the project.
+### Article
 
-## Admin
+* UUID primary key
+* Fields: title, body, author, created_at, updated_at
+* Snippet property (first 5 words)
+* Author only edit/delete permissions
 
-Access the Django admin at `http:8000/admin/` after creating a superuser. The admin includes models registered by the apps (such as Article and the custom User model).
+### Comment
 
-## Templates & Static
+* UUID primary key
+* Restrictions: No self commenting, one comment per article per user
 
-- Templates are in `templates/` and the apps use template names under `templates/articles/`, `templates/registration/`, and `templates/components/`.
-- Static assets are expected in `static/`.
+## URL Routes
 
-## Development notes & suggestions
+| URL                          | Description                  | Auth Required |
+| ---------------------------- | ---------------------------- | ------------- |
+| `/`                          | Homepage                     | No            |
+| `/accounts/register/`        | User registration            | No            |
+| `/accounts/login/`           | User login                   | No            |
+| `/accounts/logout/`          | User logout                  | Yes           |
+| `/accounts/password_change/` | Change password              | Yes           |
+| `/accounts/password_reset/`  | Reset password               | No            |
+| `/articles/`                 | List all articles            | Yes           |
+| `/articles/new/`             | Create article               | Yes           |
+| `/articles/<uuid>/`          | View article & comments      | Yes           |
+| `/articles/<uuid>/edit/`     | Edit article (author only)   | Yes           |
+| `/articles/<uuid>/delete/`   | Delete article (author only) | Yes           |
 
-- The repository already uses a custom user model (see `accounts/models.py`). When switching databases or testing migrations, ensure you migrate `accounts` first.
-- If you add third-party packages, pin them into `requirements.txt` and include notes in this README..
-- Consider adding `black`, `flake8`/`ruff`, and pre-commit hooks for code quality.
+## Testing
 
-## Contributing
+```bash
+# Run all tests
+python manage.py test
 
-1. Fork the repository and create a feature branch:
+# Run specific app tests
+python manage.py test accounts
+python manage.py test articles
 
-   ```python
-   git checkout -b feat/my-feature
-   ```
+# With Docker
+docker compose exec web python manage.py test
+```
 
-2. Make changes and run tests locally.
-3. Open a pull request describing your changes.
+## Development
 
-Keep changes small and focused. Add tests for new functionality when possible.
+### Code Formatting
 
-## Deployment
+```bash
+# Format code with Black
+black .
 
-This README includes only minimal production guidance. Typical steps:
+# Check formatting
+black --check .
+```
 
-- Configure a production database (Postgres recommended)
-- Add a WSGI/ASGI server (Gunicorn/uvicorn) behind a reverse proxy (NGINX)
-- Set `DEBUG = False`, update `ALLOWED_HOSTS`, and set a secure `SECRET_KEY`
-- Serve static files via CDN or NGINX after running `python manage.py collectstatic`
+### Database Operations
+
+```bash
+# Create migrations
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+
+# Access admin
+# Visit http://localhost:8000/admin/
+```
+
+### Adding Dependencies
+
+```bash
+pip install package-name
+pip freeze > requirements.txt
+
+# For Docker, rebuild
+docker compose up --build
+```
+
+## Deployment Considerations
+
+**Before deploying to production:**
+
+1. Set `DEBUG = False` in settings
+2. Configure `ALLOWED_HOSTS` with your domain
+3. Use strong `SECRET_KEY` (generate new one)
+4. Set up production database
+5. Configure HTTPS/SSL
+6. Run `python manage.py collectstatic`
+7. Use production WSGI server (Gunicorn)
+8. Set up NGINX as reverse proxy
+9. Configure email backend for password reset
+10. Enable security headers in settings
+
+**Example production settings:**
+
+```python
+DEBUG = False
+ALLOWED_HOSTS = ['yourdomain.com']
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+```
 
 ## Troubleshooting
 
-- "Migrations conflict" or missing tables: run `python manage.py makemigrations`/`migrate`. If you changed the custom user model after initial migrations, restoring a clean DB may be required.
-- Template not found: check `TEMPLATES` DIRS in `newspaper_project/settings.py` and ensure `templates/` is included.
+**Template not found**: Check `TEMPLATES['DIRS']` includes templates folder
+
+**Database connection error**: Verify PostgreSQL is running and credentials in `.env`
+
+**Port already in use**: Kill process on port 8000 or use different port
+
+**Migration conflicts**: Delete migrations (except `__init__.py`), recreate database, run migrations
+
+**Docker permission issues**: Run `chmod +x wait-for-it.sh`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Make changes and write tests
+4. Run tests: `python manage.py test`
+5. Format code: `black .`
+6. Commit: `git commit -m "Add my feature"`
+7. Push: `git push origin feat/my-feature`
+8. Open a Pull Request
 
 ## License
 
-This project includes a `LICENSE` file in the repository root. Check that file for license details.
+This project is licensed under the MIT License see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-If you need help maintaining or extending this project, open an issue or reach out to the repository owner.
-
+For questions or issues, please open an issue on GitHub or contact the repository owner.
