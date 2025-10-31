@@ -4,9 +4,12 @@ from .models import Article, Comment
 
 # Register your models here.
 
+
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 0
+
+
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [
@@ -18,5 +21,6 @@ class ArticleAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+
 
 admin.site.register(Comment)
