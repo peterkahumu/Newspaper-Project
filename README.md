@@ -80,15 +80,66 @@ cp .env_example .env
 4. Provide a secret key next to the `SECRET_KEY` variable.
 
 > NB: Please make sure that `.env` is added to `.gitignore` to avoid uploading sensitive information to the cloud.
+
+## Docker (optional)
+
+If you prefer running the project in containers instead of a local virtual environment, this repository includes a `Dockerfile`, `docker-compose.yml`, and a `.dockerignore` to help you build and run the project with Docker.
+
+Note: The instructions below assume your `docker-compose.yml` defines a service named `web`. If your service uses a different name, replace `web` with your service name when running the commands.
+
+1. Build and start containers (foreground):
+
+```bash
+docker compose up --build
+```
+
+Or run in detached mode:
+
+```bash
+docker compose up -d --build
+```
+
+2. Create a superuser (in the container):
+
+```bash
+docker compose run --rm web python manage.py createsuperuser
+```
+
+3. Collect static files (if needed):
+
+```bash
+docker compose run --rm web python manage.py collectstatic --noinput
+```
+
+4. Stop and remove containers:
+
+```bash
+docker compose down
+```
+
+Environment variables: keep using a `.env` (or `.env.example`) for secret/config values. `docker-compose` will automatically load variables from a `.env` file in the compose directory. Make sure sensitive values (like `SECRET_KEY`) are not committed.
+
+Why choose Docker?
+- Isolation: dependencies and the runtime environment are containerized and consistent across machines.
+- Useful for CI and production parity.
+
+Why choose a virtualenv?
+- Simpler for light local development and quick iteration without containers.
+- Slightly less overhead on machines without Docker installed.
+
+Both approaches are supported — pick the one that fits your workflow.
 ## Running tests
 
 Run the project's tests with Django's test runner:
 
    ```python
+   python manage.py test <app-name>
+   ```
+   for a specific app, or
+   ```python 
    python manage.py test
    ```
-
-This will run tests in the `accounts`, `articles`, and `pages` apps (if present).
+   to run the all the test in the project.
 
 ## Admin
 
